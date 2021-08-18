@@ -6,7 +6,7 @@ export const setting ={
         height : 720
     },
     timeout : 90000,
-    loop : 90,
+    loop : 180,
     headless: true
 
 }

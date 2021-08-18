@@ -494,7 +494,7 @@ export const Login = async(_env,_game) => {
         if (err) console.log(err)
         });
     // Send Telegram if Failed
-    if(t >= 90){
+    if(flag === false){
         chai.request("https://api.telegram.org")
         .post("/bot1710698751:AAFaBfulGZHsEXdkACx-BbDwn75nJ2i1MfY/sendMessage")
         .send({
