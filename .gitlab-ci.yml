@@ -1,0 +1,40 @@
+image: 
+  name: git3.nexdev.net:5050/rnd/testing/mocha-playwright
+
+stages: 
+  - test
+  - config.after.test
+  - after-test
+  - cleanup
+
+login-test:
+  stage: test
+  tags:
+   - docker-automation-test
+  script:
+   - npm install
+   - set NODE_ENV=cf_prod
+   - npm run test --args=Job=$CI_JOB_ID
+  artifacts:
+    paths:
+      - Report/Pictures/
+      - Report/Videos/
+      - Report/LogPage
+      - Report/Log.txt
+    when: always
+    expire_in: 1 day  
+
+cleanup_job:
+  stage: cleanup
+  tags:
+  - docker-automation-test
+  script:
+    - echo "Cleaning up"
+    - rm -rf "%CACHE_PATH%/%CI_PIPELINE_ID%"
+  when: always
+  
+  
+
+
+  
+  

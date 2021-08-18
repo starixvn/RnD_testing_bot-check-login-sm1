@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"name": "jest-PW",
+			"path": "..\\..\\SC1\\jest-PW"
+		},
+		{
+			"path": "..\\..\\..\\Jmeter\\ws-rvp1-test\\ws-rvp1-test"
+		},
+		{
+			"path": "..\\..\\..\\demo\\dockerImage"
+		},
+		{
+			"path": "..\\..\\Mocha_Playwright_share\\Mocha_Playwright_share"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\mocha-playwright"
+		}
+	],
+	"settings": {}
+}
