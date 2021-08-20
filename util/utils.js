@@ -498,7 +498,7 @@ export const Login = async(_env,_game) => {
         chai.request("https://api.telegram.org")
         .post("/bot1710698751:AAFaBfulGZHsEXdkACx-BbDwn75nJ2i1MfY/sendMessage")
         .send({
-            chat_id: -1001469445027,
+            chat_id: -1001353358025,
             parse_mode: "markdown",
             text: `*CI Job 「Check Login SM1」*..🚀\n🚫*FAILED*🚫 - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png)\nRefer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job})\nDuration time over ${t} seconds\n____________________`
         }).end( async(err,res)=>{
