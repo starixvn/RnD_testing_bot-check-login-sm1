@@ -26,7 +26,7 @@
         "jsonpath": "1.1.1"
     },
     "scripts": {
-        "test": "mocha  --timeout 300000 Games/GameLobby_Test.js -r @babel/register $npm_config_args --file ./Setup.js --file ./Teardown.js  --reporter mochawesome --reporter-options reportDir=Report ",
+        "test": "mocha  --timeout 0 Games/GameLobby_Test.js -r @babel/register $npm_config_args --file ./Setup.js --file ./Teardown.js  --reporter mochawesome --reporter-options reportDir=Report ",
         "smoke": "mocha --timeout 60000 Games/**/*_Test.js  -r @babel/register  --fgrep Smoke_ --file ./Setup.js  --file ./Teardown.js  --reporter mochawesome --reporter-options reportDir=Report "
     },
     "dependencies": {}
