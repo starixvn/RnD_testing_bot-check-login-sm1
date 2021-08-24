@@ -500,7 +500,7 @@ export const Login = async(_env,_game) => {
         .send({
             token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
             conversationId: -1001469445027,
-            message: `*CI Job 「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
+            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
             // message : "Test"
         }).end( async(err,res)=>{
             expect(res).to.have.status(200)
