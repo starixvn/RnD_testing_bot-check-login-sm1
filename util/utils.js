@@ -1,11 +1,9 @@
 import * as config from './../config/config'
-import pixelmatch from 'pixelmatch'
 import * as MemberSiteFunc from '../Games/MemberSite_Function'
 import * as GameLobbyFunc from '../Games/GameLobby_Funcion'
 import * as gsUtil from './gsutils'
 import { formatWithOptions } from 'util'
 const fs = require('fs')
-const { createWorker } = require('tesseract.js')
 const path = require('path')
 const PNG = require('pngjs').PNG
 
@@ -272,45 +270,6 @@ export const CaptureSubImageToFile = async(_path,_x, _y , _w, _h) => {
         console.log('Error '+error.message)
     } 
 }
-export const findImage = async(_subimage, _x=null, _y=null, _w=null, _h=null) => {
-    /* Test Comment*/
-    try {
-        if(typeof _subimage === 'object'){
-            _x = _subimage.left
-            _y = _subimage.top
-            _w = _subimage.width
-            _h = _subimage.height
-            _subimage = _subimage.ImageCompare
-        } else if(isNaN(_x) === false){}
-        else {
-            _y = _x.top
-            _w = _x.width
-            _h = _x.height
-            _x = _x.left
-        }
-        let flag=null
-        let si = readImageData(_subimage)
-        let sc
-        let diff = new PNG({_w, _h});
-        let loop =true;
-        while(loop){
-            sc = PNG.sync.read(await page.screenshot({ clip : {x: _x, y: _y, width: _w, height : _h} }))
-            flag = pixelmatch((await si).data,sc.data, diff.data, _w, _h, { threshold : 0.15 })
-            // console.log(Date.now())
-            // console.log('a_pixeldiff:'+flag.toString())
-            // console.log('e_pixelmatch'+(_w*_h*0.07).toString())
-            if(flag<(_w*_h*0.07)) return { Val : true , Err : { IsErr : false , ErrMess : ""}}
-            setTimeout(() => { 
-                loop = false
-                }, config.setting.timeout);
-            // fs.writeFileSync('diff.png', PNG.sync.write(diff));
-        }
-        return { Val : false , Err : { IsErr : false , ErrMess : ""}}
-    } catch (error) {
-        console.log('Error '+error.message)
-        return { Val : false , Err : { IsErr : true , ErrMess : "Error: "+ error.message}}
-    }
-}
 
 export const imageShouldNotDisplay = async(_subimage, _x=null, _y=null, _w=null, _h=null) => {
     /* Test Comment*/
@@ -352,21 +311,6 @@ export const imageShouldNotDisplay = async(_subimage, _x=null, _y=null, _w=null,
     }
 }
 
-// parse text from image
-export const getTextFromImage = async(_path) => {
-    try {
-        const worker = createWorker()
-        await worker.load();
-        await worker.loadLanguage('eng');
-        await worker.initialize('eng');
-        const { data: { text } } = await worker.recognize(_path);
-        // console.log(text)
-        await worker.terminate();
-        return text
-    } catch (error) {
-        console.log('Error '+error.message)
-    }
-}
 
 // Parse text to Number
 export const parseNumber = async(_text) => {
