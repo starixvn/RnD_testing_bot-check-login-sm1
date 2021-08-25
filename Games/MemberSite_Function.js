@@ -10,36 +10,24 @@ export const login = async(_env,_game) => {
         // Go to Membersite Url
         await utils.navigate(config[_env].url)
         await utils.waitForLoadState()
+        nw = await utils.ReturnFlag(MemberSiteLocator.txtUsername)
         
-        // Input Username and Password
-        await utils.sendKeys(MemberSiteLocator.txtUsername,config[_env].username[_game])
-        await utils.sendKeys(MemberSiteLocator.txtPassword,config[_env].password)
-
-        // Enter Login button
-        if(_env == 'cf_prod'){
-            await utils.clickEl(MemberSiteLocator.btnLoginPro)
-        } else {
-            await utils.clickEl(MemberSiteLocator.btnLogin)
+        if(nw === true){
+            // Input Username and Password
+            await utils.sendKeys(MemberSiteLocator.txtUsername,config[_env].username[_game])
+            await utils.sendKeys(MemberSiteLocator.txtPassword,config[_env].password)
+    
+            // Enter Login button
+            if(_env == 'cf_prod'){
+                await utils.clickEl(MemberSiteLocator.btnLoginPro)
+            } else {
+                await utils.clickEl(MemberSiteLocator.btnLogin)
+            }
+            await utils.waitEl(MemberSiteLocator.imgLogo)
         }
-        await utils.waitEl(MemberSiteLocator.imgLogo)
+        
     } catch (error) {
         console.error(error.message);
-        // Login again
-        // Go to Membersite Url
-        await utils.navigate(config[_env].url)
-        await utils.waitForLoadState()
-        
-        // Input Username and Password
-        await utils.sendKeys(MemberSiteLocator.txtUsername,config[_env].username[_game])
-        await utils.sendKeys(MemberSiteLocator.txtPassword,config[_env].password)
-
-        // Enter Login button
-        if(_env == 'cf_prod'){
-            await utils.clickEl(MemberSiteLocator.btnLoginPro)
-        } else {
-            await utils.clickEl(MemberSiteLocator.btnLogin)
-        }
-        await utils.waitEl(MemberSiteLocator.imgLogo)
     }
 }
     

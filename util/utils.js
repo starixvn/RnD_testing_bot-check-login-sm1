@@ -129,6 +129,14 @@ export const waitForLoadState = async() => {
          // this.screenFail()
      }
 }
+
+export const ReturnFlag = async(_el) => {
+    try {
+        return await page.isVisible(_el)
+     } catch (error) {
+         // this.screenFail()
+     }
+}
 // Wait Element 
 export const waitEl = async(_el) => {
     try {
@@ -409,52 +417,62 @@ export const shouldBeEqual = async(_val,_expect,_mess="") => {
 
 // Login
 export const Login = async(_env,_game) => {
-    let flag
+    let flag,t
     let starttime,endtime
+    let runtime = new Date().toLocaleDateString()  + "   " + new Date().toLocaleTimeString()
     if(_env != 'cf_local') {
         // Login Member Site
         await MemberSiteFunc.login(_env,_game)
         // Navigate Sabaclub
-        await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
+        if(nw === true){
+            await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
+        }
     } else {
         // Navigate Sabaclub from Simulator
         await MemberSiteFunc.login_local(_env,_game)
     }
-    // Verify go to Game Lobby Successfully
-    starttime = Date.now()
-    flag = await GameLobbyFunc.verifyLoginSuccessfully()
-    endtime = Date.now()
-    let t = Math.round((endtime - starttime)/1000)
-    console.log('Duration to SSO : (' + (endtime - starttime) +'ms)')
-    const args = await parseArg(process.argv[7])
-    let runtime = new Date().toLocaleDateString()  + "   " + new Date().toLocaleTimeString()
-
-    // log ws
-    let ws =""
-    for(let i = 0 ; i< wsMessageReceived.length ; i++){
-        ws= ws + wsMessageReceived[i] + "\n"
+    
+    if(nw === true) {
+        // Verify go to Game Lobby Successfully
+        starttime = Date.now()
+        flag = await GameLobbyFunc.verifyLoginSuccessfully()
+        endtime = Date.now()
+        t = Math.round((endtime - starttime)/1000)
+        console.log('Duration to SSO : (' + (endtime - starttime) +'ms)')
+        const args = await parseArg(process.argv[7])
+    
+        // log ws
+        let ws =""
+        for(let i = 0 ; i< wsMessageReceived.length ; i++){
+            ws= ws + wsMessageReceived[i] + "\n"
+        }
+        fs.writeFileSync('./Report/Log.txt',ws, function (err) {
+            if (err) console.log(err)
+            });
+        // Send Telegram if Failed
+        if(flag.Val === false){
+            chai.request("https://bot.nexdev.net")
+            .post("/skynex/api/messages/forwardwithtoken").set('content-type', 'application/x-www-form-urlencoded')
+            .send({
+                token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
+                conversationId: -1001469445027,
+                message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
+                // message : "Test"
+            }).end( async(err,res)=>{
+                expect(res).to.have.status(200)
+            })
+        } else {
+            expect(false,"Network has issue").to.be.true
+        }
     }
-    fs.writeFileSync('./Report/Log.txt',ws, function (err) {
-        if (err) console.log(err)
-        });
-    // Send Telegram if Failed
-    if(flag.Val === false){
-        chai.request("https://bot.nexdev.net")
-        .post("/skynex/api/messages/forwardwithtoken").set('content-type', 'application/x-www-form-urlencoded')
-        .send({
-            token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
-            conversationId: -1001469445027,
-            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
-            // message : "Test"
-        }).end( async(err,res)=>{
-            expect(res).to.have.status(200)
-        })
+    
+    if(nw === true) {
+        // Log info
+        let gsheet = new gsUtil.Doc('1ysx_va_Qy8I8yx9c9XTRIFjOXjZ6AqKNmkcnmP8LMqg')
+        await gsheet.init()
+        await gsheet.getSheet('Log')
+        await gsheet.insert({"Product":"SM1","Runtime (UTC+0)": runtime,"Duration": endtime-starttime,"Status" : t > 30 ? "Failed" : "Passed"})
     }
-    // Log info
-    let gsheet = new gsUtil.Doc('1ysx_va_Qy8I8yx9c9XTRIFjOXjZ6AqKNmkcnmP8LMqg')
-    await gsheet.init()
-    await gsheet.getSheet('Log')
-    await gsheet.insert({"Product":"SM1","Runtime (UTC+0)": runtime,"Duration": endtime-starttime,"Status" : t > 30 ? "Failed" : "Passed"})
 
 
 
