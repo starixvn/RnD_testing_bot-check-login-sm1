@@ -18,6 +18,11 @@ describe('GameLobby', ()=>{
     await context.close()
   })
   it('Verify SSO succesfully on PRO', async()=>{
+    let chknw = await utils.checkNetwork()
+    if(chknw === true){
       await utils.Login(env,game);
+    } else {
+      await utils.shouldBeEqual(true,false,"Network has issue")
+    }
   })
 })
