@@ -6,7 +6,7 @@ export const setting ={
         height : 720
     },
     timeout : 90000,
-    loop : 180,
+    loop : 90,
     headless: true
 
 }
@@ -43,7 +43,8 @@ export const cf_uat ={
 export const cf_prod ={
     url: "https://www.viva88.com/login888.aspx?IsSSL=1",
     username: {
-       Gamelobby: "SUPERTEST30102052" 
+       Gamelobby1: "SUPERTEST30102052",
+       Gamelobby2: "SUPERTEST30102090" 
     },
     password: "1234aaAA",
     gamelobbyurl: "/VendorGame/OpenSabaClubLobby?IsMobi=true"

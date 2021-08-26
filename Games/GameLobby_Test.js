@@ -19,10 +19,17 @@ describe('GameLobby', ()=>{
   })
   it('Verify SSO succesfully on PRO', async()=>{
     let chknw = await utils.checkNetwork()
+    let chk = true
     if(chknw === true){
-      await utils.Login(env,game);
+      chk = await utils.Login(env,"Gamelobby1");
+      if(chk === false){
+        t=0
+        await utils.clearLog()
+        await utils.logOut()
+        chk = await utils.Login(env,"Gamelobby2");
+      }
     } else {
       await utils.shouldBeEqual(true,false,"Network has issue")
     }
-  })
+  }).timeout(270000)
 })

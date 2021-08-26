@@ -3,6 +3,7 @@ import * as MemberSiteFunc from '../Games/MemberSite_Function'
 import * as GameLobbyFunc from '../Games/GameLobby_Funcion'
 import * as gsUtil from './gsutils'
 import { formatWithOptions } from 'util'
+import { MemberSiteLocator } from '../Games/MemberSite_Locator'
 const fs = require('fs')
 const path = require('path')
 const PNG = require('pngjs').PNG
@@ -239,8 +240,9 @@ export const selectDrp = async(_el, _val) => {
 
 // Clear Log Message
 export const clearLog = async() =>{
-    wsFindMessage = []
+    wsMessageReceived = []
 }
+
 
 // ScreenShot
 export const screenShotFailed = async() => {
@@ -417,60 +419,72 @@ export const wsHearMessageOff = async() => {
 export const shouldBeEqual = async(_val,_expect,_mess="") => {
     global.expect(_val,_mess).to.equal(_expect) 
 }
+export const writeLog = async() => {
+    fs.writeFileSync('./Report/Log.txt',ws, function (err) {
+        if (err) console.log(err)
+        });
+} 
+export const notify = async(_status)=>{
+    const args = await parseArg(process.argv[7])
+    // let runtime = new Date().toLocaleDateString()  + "   " + new Date().toLocaleTimeString()
+    // Send Telegram if Failed
+    if(_status === false){
+        let res = await chai.request("https://bot.nexdev.net")
+        .post("/skynex/api/messages/forwardwithtoken").set('content-type', 'application/x-www-form-urlencoded')
+        .send({
+            token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
+            conversationId: -1001469445027,
+            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED ${msg}*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sc1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sc1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
+        })
+        await shouldBeEqual(res.statusCode,200)
+    }
 
+    // // Log info
+    // let gsheet = new gsUtil.Doc('1ysx_va_Qy8I8yx9c9XTRIFjOXjZ6AqKNmkcnmP8LMqg')
+    // await gsheet.init()
+    // await gsheet.getSheet('Log')
+    // await gsheet.insert({"Product":"SC1","Runtime (UTC+0)": runtime,"Duration": t,"Status" : t > 30 ? "Failed" : "Passed"})
+}
 
 // Login
 export const Login = async(_env,_game) => {
-    let flag,t
+    let flag
     let starttime,endtime
-    let runtime = new Date().toLocaleDateString()  + "   " + new Date().toLocaleTimeString()
-    if(_env != 'cf_local') {
-        // Login Member Site
-        await MemberSiteFunc.login(_env,_game)
-        // Navigate Sabaclub
-        await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
-    } else {
-        // Navigate Sabaclub from Simulator
-        await MemberSiteFunc.login_local(_env,_game)
+    // Login Member Site
+    await MemberSiteFunc.login(_env,_game)
+    await waitForLoadState()
+    flagLogMemberSite = await ReturnFlag(MemberSiteLocator.btnLogout)
+    if(flagLogMemberSite === false){
+        msg = "Login Member Site" 
+        await notify(false)
+        await shouldBeEqual(true,false,"Failed on Login Member Site")
+        return false
     }
-    
+    // Navigate Sabaclub
+    await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
     // Verify go to Game Lobby Successfully
     starttime = Date.now()
     flag = await GameLobbyFunc.verifyLoginSuccessfully()
     endtime = Date.now()
     t = Math.round((endtime - starttime)/1000)
     console.log('Duration to SSO : (' + (endtime - starttime) +'ms)')
-    const args = await parseArg(process.argv[7])
 
-    // log ws
-    let ws =""
-    for(let i = 0 ; i< wsMessageReceived.length ; i++){
-        ws= ws + wsMessageReceived[i] + "\n"
-    }
-    fs.writeFileSync('./Report/Log.txt',ws, function (err) {
-        if (err) console.log(err)
-        });
-    // Send Telegram if Failed
     if(flag.Val === false){
-        chai.request("https://bot.nexdev.net")
-        .post("/skynex/api/messages/forwardwithtoken").set('content-type', 'application/x-www-form-urlencoded')
-        .send({
-            token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
-            conversationId: -1001469445027,
-            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
-            // message : "Test"
-        }).end( async(err,res)=>{
-            expect(res).to.have.status(200)
-        })
+        if(attempt === 1){
+            attempt = 2
+            return false
+        } else {
+            msg = "SSO" 
+            await notify(false)
+            await shouldBeEqual(true,false,"Fail on SSO")
+            return false
+        }
     }
-    // Log info
-    let gsheet = new gsUtil.Doc('1ysx_va_Qy8I8yx9c9XTRIFjOXjZ6AqKNmkcnmP8LMqg')
-    await gsheet.init()
-    await gsheet.getSheet('Log')
-    await gsheet.insert({"Product":"SM1","Runtime (UTC+0)": runtime,"Duration": endtime-starttime,"Status" : t > 30 ? "Failed" : "Passed"})
+    return true
+}
 
-    // console.log(flag)
-    expect(flag.Val,"Fail on Login GameLobby").to.be.true
+export const logOut = async()=> {
+    await context.clearCookies()
 }
 
 export const parseArg = async(_args)=> {

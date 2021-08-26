@@ -34,5 +34,10 @@ before(async () => {
     global.expect = expect
     global.chai = chai
     global.fs = fs
+    global.t = 0
+    global.msg = ""
+    global.ws = ""
+    global.flagLogMemberSite = true
+    global.attempt = 1
 })
 
