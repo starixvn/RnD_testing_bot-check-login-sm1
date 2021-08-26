@@ -15,6 +15,7 @@ login-test:
    - npm install
    - set NODE_ENV=cf_prod
    - npm run test --args=Job=$CI_JOB_ID
+  timeout: 5m
   artifacts:
     paths:
       - Report/Pictures/
