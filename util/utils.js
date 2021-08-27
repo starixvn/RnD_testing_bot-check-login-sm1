@@ -131,10 +131,17 @@ export const waitForLoadState = async() => {
      }
 }
 
-export const ReturnFlag = async(_el) => {
-    try {
-        return await page.isVisible(_el)
+export const ReturnFlag = async() => {
+    try {        
+        for(let t =0 ; t < config.setting.loop ; t++){
+            if(page.url().toString().includes('Sports') === true) {
+                return true
+            }
+            await sleep(200)
+        }     
+        return false
      } catch (error) {
+        return false
          // this.screenFail()
      }
 }
@@ -453,7 +460,7 @@ export const Login = async(_env,_game) => {
     // Login Member Site
     await MemberSiteFunc.login(_env,_game)
     await waitForLoadState()
-    flagLogMemberSite = await ReturnFlag(MemberSiteLocator.btnLogout)
+    flagLogMemberSite = await ReturnFlag()
     if(flagLogMemberSite === false){
         msg = "Login Member Site" 
         await notify(false)
