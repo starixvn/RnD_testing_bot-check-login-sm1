@@ -441,7 +441,7 @@ export const notify = async(_status)=>{
         .send({
             token: "0A40aOc7CtpzjbBSJu8KNWQRoXyjRvf9",
             conversationId: -1001469445027,
-            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED ${msg}*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sc1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sc1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
+            message: `*「Check Login SM1」*..:rocket:{{NewLine}}:no_entry_sign:*FAILED ${msg}*:no_entry_sign: - [Picture](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}/artifacts/file/Report/Pictures/Verify%20SSO%20succesfully%20on%20PRO.png){{NewLine}}Refer [log](https://git3.nexdev.net/RnD/testing/bot-check-login-sm1/-/jobs/${args.Job}){{NewLine}}Duration time over ${t} seconds{{NewLine}}____________________`
         })
         await shouldBeEqual(res.statusCode,200)
     }
@@ -473,13 +473,11 @@ export const Login = async(_env,_game) => {
     if(flag.Val === false){
         if(attempt === 1){
             attempt = 2
-            msg = `SSO = account ${config.cf_prod.username.Gamelobby1}`
-            await notify(false)
             return false
         } else {
             msg = `SSO = account ${config.cf_prod.username.Gamelobby2}`
             await notify(false)
-            await shouldBeEqual(true,false,"Fail on SSO = account ${}")
+            await shouldBeEqual(true,false,"Fail on SSO")
             return false
         }
     }
