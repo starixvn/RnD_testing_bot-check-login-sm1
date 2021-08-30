@@ -22,7 +22,7 @@ login-test:
       - Report/Videos/
       - Report/LogPage
       - Report/Log.txt
-    when: always
+    when: on_failure
     expire_in: 1 day  
 
 cleanup_job:

@@ -445,12 +445,6 @@ export const notify = async(_status)=>{
         })
         await shouldBeEqual(res.statusCode,200)
     }
-
-    // // Log info
-    // let gsheet = new gsUtil.Doc('1ysx_va_Qy8I8yx9c9XTRIFjOXjZ6AqKNmkcnmP8LMqg')
-    // await gsheet.init()
-    // await gsheet.getSheet('Log')
-    // await gsheet.insert({"Product":"SC1","Runtime (UTC+0)": runtime,"Duration": t,"Status" : t > 30 ? "Failed" : "Passed"})
 }
 
 // Login
@@ -479,11 +473,13 @@ export const Login = async(_env,_game) => {
     if(flag.Val === false){
         if(attempt === 1){
             attempt = 2
+            msg = `SSO = account ${config.cf_prod.username.Gamelobby1}`
+            await notify(false)
             return false
         } else {
-            msg = "SSO" 
+            msg = `SSO = account ${config.cf_prod.username.Gamelobby2}`
             await notify(false)
-            await shouldBeEqual(true,false,"Fail on SSO")
+            await shouldBeEqual(true,false,"Fail on SSO = account ${}")
             return false
         }
     }

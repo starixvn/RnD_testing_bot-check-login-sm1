@@ -16,14 +16,14 @@ before(async () => {
         viewport: {
           width: config.setting.viewport.width,
           height: config.setting.viewport.height
-        },
-        recordVideo: {
-          dir: './Report/Videos/',
-        },
-        recordHar : {
-          path: './Report/LogPage',
-          omitContent: true
         }
+        // recordVideo: {
+        //   dir: './Report/Videos/',
+        // },
+        // recordHar : {
+        //   path: './Report/LogPage',
+        //   omitContent: true
+        // }
     });
     const page = await context.newPage();
     global.page = page
