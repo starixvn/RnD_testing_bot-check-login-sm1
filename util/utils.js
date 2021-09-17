@@ -456,10 +456,15 @@ export const Login = async(_env,_game) => {
     await waitForLoadState()
     flagLogMemberSite = await ReturnFlag()
     if(flagLogMemberSite === false){
-        msg = "Login Member Site" 
-        await notify(false)
-        await shouldBeEqual(true,false,"Failed on Login Member Site")
-        return false
+        if(attempt === 1){
+            attempt = 2
+            return false
+        } else {
+            msg = "Login Member Site" 
+            await notify(false)
+            await shouldBeEqual(true,false,"Failed on Login Member Site")
+            return false
+        }
     }
     // Navigate Sabaclub
     await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
