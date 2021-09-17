@@ -146,7 +146,7 @@ export const ReturnFlag = async() => {
      }
 }
 export const checkNetwork = async() => {
-    let res = await chai.request("https://www.google.com").get("/").send()
+    let res = await chai.request("https://www.viva88.com").get("/login888.aspx?IsSSL=1").send()
     return (res.statusCode === 200) ? true : false
 }
 // Wait Element 
