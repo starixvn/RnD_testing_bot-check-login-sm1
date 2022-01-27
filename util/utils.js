@@ -1,9 +1,6 @@
 import * as config from './../config/config'
 import * as MemberSiteFunc from '../Games/MemberSite_Function'
 import * as GameLobbyFunc from '../Games/GameLobby_Funcion'
-import * as gsUtil from './gsutils'
-import { formatWithOptions } from 'util'
-import { MemberSiteLocator } from '../Games/MemberSite_Locator'
 const fs = require('fs')
 const path = require('path')
 const PNG = require('pngjs').PNG
@@ -468,6 +465,9 @@ export const Login = async(_env,_game) => {
     }
     // Navigate Sabaclub
     await navigate(page.url().toString().replace(/\/Sports/g,'')+config[_env].gamelobbyurl)
+    //select group currency
+    await selectDrp('xpath=//*/select[@id="group"]','61b048d27e6d8f000145357f')
+    await clickEl('xpath=//input[@value="Submit"]')
     // Verify go to Game Lobby Successfully
     starttime = Date.now()
     flag = await GameLobbyFunc.verifyLoginSuccessfully()
